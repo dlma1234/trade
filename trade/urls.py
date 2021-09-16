@@ -17,8 +17,11 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
 
+from api.views import OrderView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('authenticate/', obtain_auth_token, name='authentication'),
+    path('order/', OrderView.as_view(), name='order_view'),
 ]
