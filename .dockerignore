@@ -1,0 +1,8 @@
+# Exclude specific Files
+.gitignore
+
+# Exclude file extensions
+*.md
+
+# Exclude folders
+local_dev_trade_db/*
