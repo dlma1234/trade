@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework.authtoken.views import obtain_auth_token
+
+from trade.api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('authenticate/', obtain_auth_token, name='authentication'),
 ]
