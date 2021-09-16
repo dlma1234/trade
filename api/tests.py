@@ -15,21 +15,30 @@ class TradeAPITest(APITestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(
-            username="test_user", email="test_user@test.com", password="testpass"
+            username="test_user", 
+            email="test_user@test.com", 
+            password="testpass"
+        )
+        self.stock_foo = self._create_stock(
+            name="Foo", price=40
         )
 
     def test_user_logs_in_success(self):
-        response = self.client.login(username="test_user", password="testpass")
+        response = self.client.login(
+            username="test_user", password="testpass"
+        )
         self.assertTrue(response)
 
     def test_user_logs_in_failed(self):
-        response = self.client.login(username="test_user", password="testpass-xxxxx")
+        response = self.client.login(
+            username="test_user", password="testpass-xxxxx"
+        )
         self.assertFalse(response)
     
     def test_post_order_buy(self):
         self.client.force_authenticate(user=self.user)
 
-        stock_to_buy = self._create_stock(name="Foo", price=40)
+        stock_to_buy = self.stock_foo
         
         path = reverse("order_view")
         user_input = {
@@ -38,7 +47,9 @@ class TradeAPITest(APITestCase):
             "action": "buy"
         }
 
-        response = self.client.post(path=path, data=user_input, format="json")
+        response = self.client.post(
+            path=path, data=user_input, format="json"
+        )
 
         self.assertEqual(response.status_code, 201)
 
@@ -51,6 +62,34 @@ class TradeAPITest(APITestCase):
         ).exists()
 
         self.assertTrue(order_exists)
+
+    def test_post_order_sell(self):
+        self.client.force_authenticate(user=self.user)
+
+        stock_to_sell = self.stock_foo
+        
+        path = reverse("order_view")
+        user_input = {
+            "stock_id": stock_to_sell.id,
+            "quantity": 50,
+            "action": "sell"
+        }
+
+        response = self.client.post(
+            path=path, data=user_input, format="json"
+        )
+
+        self.assertEqual(response.status_code, 201)
+
+        sell_order_exists = Order.objects.filter(
+            user_id=self.user.id,
+            stock_id=stock_to_sell.id, 
+            action="sell", 
+            quantity=50, 
+            total=-2000,
+        ).exists()
+
+        self.assertTrue(sell_order_exists)
 
 
     # Helper methods

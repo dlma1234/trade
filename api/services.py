@@ -6,7 +6,12 @@ class TradeService:
 
     def create_order(self, user, stock_id, quantity, action):
         stock = Stock.objects.get(id=stock_id)
-        total_amount = Decimal(str(quantity)) * stock.price
+
+        if action == "buy":
+            total_amount = Decimal(str(quantity)) * stock.price
+        else:
+            total_amount = (Decimal(str(quantity)) * stock.price) * -1
+
         order = Order.objects.create(
             user_id=user, 
             quantity=quantity, 
