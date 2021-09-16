@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from api.models import Order, Stock
 
+
 class TradeService:
 
     def create_order(self, user, stock_id, quantity, action):
@@ -13,10 +14,10 @@ class TradeService:
             total_amount = (Decimal(str(quantity)) * stock.price) * -1
 
         order = Order.objects.create(
-            user_id=user, 
-            quantity=quantity, 
+            user_id=user,
+            quantity=quantity,
             action=action,
-            stock_id=stock, 
+            stock_id=stock,
             total=total_amount
         )
 
@@ -30,4 +31,3 @@ class TradeService:
         all_orders = Order.objects.filter(user_id=user_id, stock_id=stock_id)
         total = sum(order.total for order in all_orders)
         return {"total": total}
-

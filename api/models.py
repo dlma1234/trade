@@ -19,11 +19,10 @@ class Order(models.Model):
         max_digits=16, decimal_places=2, default=Decimal("0.0")
     )
     action = models.CharField(
-        null=False, 
+        null=False,
         choices=[
             ("buy", "Buy"),
             ("sell", "Sell")
         ],
         max_length=50
     )
-    

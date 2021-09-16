@@ -20,9 +20,9 @@ class OrderView(APIView):
         input_data = serializer.data
 
         TradeService().create_order(
-            user=request.user, 
-            stock_id=input_data["stock_id"], 
-            quantity=input_data["quantity"], 
+            user=request.user,
+            stock_id=input_data["stock_id"],
+            quantity=input_data["quantity"],
             action=input_data["action"]
         )
 
@@ -41,12 +41,10 @@ class StockView(APIView):
 
     def get(self, request):
         stock_name = request.query_params.get("name")
-        
+
         stock = TradeService().get_stock_by_name(input_name=stock_name)
 
         serializer = StockSerializer(stock)
         response = JsonResponse(serializer.data)
 
         return JsonResponse(serializer.data)
-
-        

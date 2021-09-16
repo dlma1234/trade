@@ -4,7 +4,6 @@ from api.models import Order, Stock
 from api.services import TradeService
 
 
-
 class StockSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stock
