@@ -25,4 +25,9 @@ urlpatterns = [
     path('authenticate/', obtain_auth_token, name='authentication'),
     path('order/', OrderView.as_view(), name='order_view'),
     path('stock/', StockView.as_view(), name='stock_view'),
+    path(
+        'user/<int:user_id>/stock/<int:stock_id>/total', 
+        OrderView().get_total_value_by_user_and_stock, 
+        name='total_value_stock_user'
+    )
 ]

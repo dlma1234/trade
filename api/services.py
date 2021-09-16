@@ -26,3 +26,8 @@ class TradeService:
         stock = Stock.objects.get(name__iexact=input_name)
         return stock
 
+    def get_total_value_by_user_and_stock(self, user_id, stock_id):
+        all_orders = Order.objects.filter(user_id=user_id, stock_id=stock_id)
+        total = sum(order.total for order in all_orders)
+        return {"total": total}
+

@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 from api.models import Order, Stock
+from api.services import TradeService
 
 
 class TradeAPITest(APITestCase):
@@ -104,9 +105,51 @@ class TradeAPITest(APITestCase):
             '{"name": "Foo", "price": "40.00"}'
         )
 
+    def test_get_total_value_by_user_and_stock(self):
+        self.client.force_authenticate(user=self.user)
 
+        # Create another stock named "Bar"
+        stock_bar = self._create_stock(name="Bar", price=50)
+
+        # Create 2 orders for stock Foo
+        self._create_order(stock_id=self.stock_foo.id, quantity=100, action="buy") # +4000
+        self._create_order(stock_id=self.stock_foo.id, quantity=20, action="sell") # -800
+
+        # Create an order for stock Bar
+        self._create_order(stock_id=stock_bar.id, quantity=50, action="buy") # + 2500
+
+        url = "/user/{user_id}/stock/{stock_id}/total".format(
+            user_id=self.user.id, 
+            stock_id=self.stock_foo.id
+        )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            str(response.content, encoding='utf8'), 
+            '{"total": "3200.00"}'
+        )
+
+        # Test the value for stock Bar
+        url = "/user/{user_id}/stock/{stock_id}/total".format(
+            user_id=self.user.id, 
+            stock_id=stock_bar.id
+        )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            str(response.content, encoding='utf8'), 
+            '{"total": "2500.00"}'
+        )
+        
     # Helper methods
     def _create_stock(self, name, price):
         stock = Stock(name=name, price=price)
         stock.save()
         return stock
+
+    def _create_order(self, stock_id, quantity, action):
+        order = TradeService().create_order(
+            user=self.user, stock_id=stock_id, quantity=quantity, action=action
+        )

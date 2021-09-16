@@ -28,6 +28,12 @@ class OrderView(APIView):
 
         return Response(status=201)
 
+    def get_total_value_by_user_and_stock(self, request, user_id, stock_id):
+        total = TradeService().get_total_value_by_user_and_stock(
+            user_id=user_id, stock_id=stock_id
+        )
+        return JsonResponse(total)
+
 
 class StockView(APIView):
 
@@ -42,6 +48,5 @@ class StockView(APIView):
         response = JsonResponse(serializer.data)
 
         return JsonResponse(serializer.data)
-
 
         
