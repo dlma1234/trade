@@ -91,6 +91,19 @@ class TradeAPITest(APITestCase):
 
         self.assertTrue(sell_order_exists)
 
+    def test_get_stock_by_name(self):
+        self.client.force_authenticate(user=self.user)
+        
+        # url = "/stocks/?name=foo"
+        url = reverse("stock_view") + "?name=Foo"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            str(response.content, encoding='utf8'), 
+            '{"name": "Foo", "price": "40.00"}'
+        )
+
 
     # Helper methods
     def _create_stock(self, name, price):

@@ -22,3 +22,7 @@ class TradeService:
 
         return order
 
+    def get_stock_by_name(self, input_name):
+        stock = Stock.objects.get(name__iexact=input_name)
+        return stock
+
